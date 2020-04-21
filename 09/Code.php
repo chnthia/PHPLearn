@@ -155,3 +155,5 @@ class Code
 		$this->show();
 	}
 }
+
+?>
