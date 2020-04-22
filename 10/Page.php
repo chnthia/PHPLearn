@@ -1,7 +1,8 @@
 <?php
 
-$page = new Page(5, 60);
-echo $page->url;
+$page = new Page(10, 88);
+var_dump($page->allUrl());
+echo $page->limit();
 
 class Page
 {
@@ -80,24 +81,61 @@ class Page
 		return $scheme.'://'.$serverName.':'.$port.$path;
 	}
 
+	protected function setUrl($str)
+	{
+		if (strstr($this->url, '?')){
+			$url = $this->url.'&'.$str;
+		} else {
+			$url = $this->url.'?'.$str;
+		}
+		return $url;
+	}
+
 	public function allUrl()
 	{
-
+		return [
+			'first' => $this->first(),
+			'prev' => $this->prev(),
+			'next' => $this->next(),
+			'last' => $this->last()
+			];
 	}
 
 	public function first()
 	{
+		return $this->setUrl('page=1');
+	}
 
+	public function next()
+	{
+		if ($this->page +1 > $this->totalPage){
+			$page = $this->totalPage;
+		} else {
+			$page = $this->page + 1;
+		}
+		return $this->setUrl('page='.$page);
 	}
 
 	public function prev()
 	{
-
+		if ($this->page - 1 < 1){
+			$page = 1;
+		} else {
+			$page = $this->page - 1;
+		}
+		return $this->setUrl('page='.$page);
 	}
 
 	public function last()
 	{
+		return $this->setUrl('page='.$this->totalPage);
+	}
 
+	public function limit()
+	{
+		// limit 0, 5; limit 5, 5
+		$offset = ($this->page - 1) * $this->number;
+		return $offset.','.$this->number;
 	}
 
 }
